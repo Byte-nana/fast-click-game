@@ -22,29 +22,38 @@
       src="https://kit.fontawesome.com/a5f079a000.js"
       crossorigin="anonymous"
     ></script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
     <!-- CSS -->
     <link rel="stylesheet" href="./css/style.css" />
     <!-- Javascript -->
     <script type="module" src="./src/main.js" defer></script>
   </head>
   <body>
-    <header>
-      <button aria-label="Button for playing game">
-        <i class="fa-solid fa-play"></i>
-        <!-- <i class="fa-solid fa-stop"></i> -->
-      </button>
-      <p>1:00</p>
-      <p>9</p>
-    </header>
-    <main>
-      <div>
-        <button>
-          <i class="fa-solid fa-rotate-right"></i>
+    <section class="game-window">
+      <header class="header">
+        <button class="btn" aria-label="Button for playing game">
+          <i class="fa-solid fa-play"></i>
+          <!-- <i class="fa-solid fa-stop"></i> -->
         </button>
-        <p>Replay❓</p>
-      </div>
-      <img src="./asset/img/bug.png" alt="bug" />
-      <img src="./asset/img/carrot.png" alt="carrot" />
-    </main>
+        <p class="timer">1:00</p>
+        <p class="carror-counter">9</p>
+      </header>
+      <main>
+        <div class="notification">
+          <button class="btn">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+          <p class="notification__text">Replay❓</p>
+        </div>
+        <img class="bug" src="./asset/img/bug.png" alt="bug" />
+        <img class="carrot" src="./asset/img/carrot.png" alt="carrot" />
+      </main>
+    </section>
   </body>
 </html>
