@@ -37,22 +37,24 @@
   <body>
     <section class="game-window">
       <header class="header">
-        <button class="btn" aria-label="Button for playing game">
+        <button class="play-btn btn" aria-label="Button for playing game">
           <i class="fa-solid fa-play"></i>
-          <!-- <i class="fa-solid fa-stop"></i> -->
         </button>
-        <p class="timer">1:00</p>
-        <p class="carror-counter">9</p>
+        <button class="pause-btn btn pause" aria-label="Button for pause game">
+          <i class="fa-solid fa-stop"></i>
+        </button>
+        <p class="timer">00 : 00</p>
+        <p class="carrot-counter">0</p>
       </header>
-      <main>
+      <main class="main">
         <div class="notification">
           <button class="btn">
             <i class="fa-solid fa-rotate-right"></i>
           </button>
           <p class="notification__text">Replay❓</p>
         </div>
-        <img class="bug" src="./asset/img/bug.png" alt="bug" />
-        <img class="carrot" src="./asset/img/carrot.png" alt="carrot" />
+        <!-- <img class="bug" src="./asset/img/bug.png" alt="bug" />
+        <img class="carrot" src="./asset/img/carrot.png" alt="carrot" /> -->
       </main>
     </section>
   </body>

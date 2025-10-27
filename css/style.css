@@ -50,6 +50,9 @@ button {
   padding-block: 1.5rem;
   text-align: center;
 }
+.pause {
+  display: none;
+}
 .timer {
   width: fit-content;
   padding: 0.2rem 1.5rem;
@@ -59,7 +62,7 @@ button {
   border-radius: 8px;
   font-size: 1.5rem;
 }
-.carror-counter {
+.carrot-counter {
   width: 46px;
   height: 46px;
   padding: 0.3rem;
@@ -94,4 +97,7 @@ button {
 .bug,
 .carrot {
   position: absolute;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
 }
