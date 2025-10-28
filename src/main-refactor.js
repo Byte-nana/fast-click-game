@@ -15,11 +15,13 @@ const visibleGameWindowHeight = gameWindow.offsetHeight - headerHeight;
 
 // Global variables
 let countdown;
-let totalSecs = 5;
+let totalSecs = 10;
 let carrotCount = 3;
 let bugCount = 4;
 
 // Starting game event
+gameWindow.addEventListener('click', handleGameStart);
+
 function handleGameStart(event) {
   const playIcon = event.target.classList.contains('fa-play');
   if (!playIcon) return;
@@ -31,7 +33,6 @@ function handleGameStart(event) {
     startGame(totalSecs, carrotCount, bugCount);
   }
 }
-gameWindow.addEventListener('click', handleGameStart);
 
 function startGame(totalSecs, carrotCount, bugCount) {
   createCarrots(carrotCount);
@@ -39,28 +40,6 @@ function startGame(totalSecs, carrotCount, bugCount) {
   carrotCounter.innerHTML = carrotCount;
   showPlayTime(totalSecs);
   startCountdown(totalSecs);
-}
-
-function showPlayTime(totalSecs) {
-  if (totalSecs < 0) return;
-  const minutes = Math.floor(totalSecs / 60);
-  const seconds = Math.floor(totalSecs - minutes * 60);
-
-  timer.innerHTML = `
-  ${String(minutes).padStart(2, '0')} : 
-  ${String(seconds).padStart(2, '0')}
-  `;
-}
-
-function startCountdown(totalSecs) {
-  countdown = setInterval(() => {
-    totalSecs--;
-    showPlayTime(totalSecs);
-
-    if (totalSecs <= 0) {
-      stopCountdown();
-    }
-  }, 1000);
 }
 
 function createCarrots(carrotCount) {
@@ -95,14 +74,42 @@ function createBugs(bugCount) {
   main.appendChild(fragment);
 }
 
-// Playing game event
-gameWindow.addEventListener('click', HandleOnGoingGame);
+function showPlayTime(totalSecs) {
+  if (totalSecs < 0) return;
+  const minutes = Math.floor(totalSecs / 60);
+  const seconds = Math.floor(totalSecs - minutes * 60);
 
-function HandleOnGoingGame(event) {
+  timer.innerHTML = `
+  ${String(minutes).padStart(2, '0')} : 
+  ${String(seconds).padStart(2, '0')}
+  `;
+}
+
+function startCountdown(totalSecs) {
+  countdown = setInterval(() => {
+    totalSecs--;
+    showPlayTime(totalSecs);
+
+    if (totalSecs <= 0) {
+      loseGame();
+    }
+  }, 1000);
+}
+
+function stopCountdown() {
+  clearInterval(countdown);
+  countdown = null;
+}
+
+// Playing game event
+gameWindow.addEventListener('click', handleOnGoingGame);
+
+function handleOnGoingGame(event) {
   let target = event.target;
   clickCarrots(target);
   clickBugs(target);
 }
+
 function clickCarrots(target) {
   const clickedCarrot = target.dataset.click;
   if (!clickedCarrot) return;
@@ -110,43 +117,66 @@ function clickCarrots(target) {
   carrotCount--;
   carrotCounter.innerHTML = carrotCount;
   if (carrotCount === 0) {
-    showAlert('You won 🥳');
+    winGame();
   }
 }
+
 function clickBugs(target) {
   const clickedBug = target.classList.contains('bug');
   if (!clickedBug) {
     return;
   } else {
-    showAlert('You Lose 🥲');
+    loseGame();
   }
 }
+
 function showAlert(message) {
   notif.classList.add('show-notification');
   notifText.textContent = message;
-  stopCountdown();
-  gameWindow.removeEventListener('click', HandleOnGoingGame);
+  pauseBtn.style.visibility = 'hidden';
+  stopGame();
 }
 
-function stopCountdown() {
-  clearInterval(countdown);
-  countdown = null;
+function removeAlert() {
+  notif.classList.remove('show-notification');
+  playBtn.classList.remove('pause');
+  pauseBtn.classList.add('pause');
 }
+function stopGame() {
+  stopCountdown();
+  gameWindow.removeEventListener('click', handleOnGoingGame);
+}
+
 function winGame() {
-  //showing notification
-  //stop playTime()
-  //stop clicking events
+  showAlert('You won 🥳');
+  stopGame();
 }
 
 function loseGame() {
-  //showing notification
-  //stop playTime()
-  //stop clicking events
+  showAlert('You Lose 🥲');
+  stopGame();
 }
 
-function replayGame() {
+// Replaying  game event
+gameWindow.addEventListener('click', replayGame);
+
+function replayGame(event) {
+  const replayIcon = event.target.classList.contains('fa-rotate-right');
+  if (!replayIcon) return;
+  removeAlert();
   //stop timer
   //stop clicking event
+  stopGame();
+  //remove existing elemtns
+  document.querySelectorAll('.carrot').forEach((item) => item.remove());
+  document.querySelectorAll('.bug').forEach((item) => item.remove());
   //reset global variable as inital values
-  //   startGame();
+
+  totalSecs = 10;
+  carrotCount = 3;
+  bugCount = 4;
+
+  //another round
+  startGame(totalSecs, carrotCount, bugCount);
+  gameWindow.addEventListener('click', handleOnGoingGame);
 }
