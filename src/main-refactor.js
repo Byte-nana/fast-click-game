@@ -13,7 +13,32 @@ const headerHeight = document.querySelector('.header').offsetHeight;
 const visibleGameWindowWidth = gameWindow.offsetWidth;
 const visibleGameWindowHeight = gameWindow.offsetHeight - headerHeight;
 
+// Background Audio
+const bgSound = document.querySelector('.audio-bg');
+const bgBtn = document.querySelector('.bg-btn');
+
+gameWindow.addEventListener('click', onBgSound);
+
+function onBgSound(event) {
+  const icon = bgBtn.querySelector('i');
+  if (event.target !== icon) {
+    return;
+  } else {
+    playBgSound();
+  }
+}
+function playBgSound() {
+  if (bgSound.paused) {
+    bgBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+    bgSound.currentTime = 0;
+    bgSound.play();
+  } else {
+    bgBtn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
+    bgSound.pause();
+  }
+}
 // Global variables
+let b;
 let countdown;
 let totalSecs = 10;
 let carrotCount = 3;
@@ -23,9 +48,11 @@ let bugCount = 4;
 gameWindow.addEventListener('click', handleGameStart);
 
 function handleGameStart(event) {
-  const playIcon = event.target.classList.contains('fa-play');
-  if (!playIcon) return;
-  if (playIcon) {
+  const playIcon = playBtn.querySelector('i');
+  //   const playIcon = event.target.classList.contains('fa-play');
+  if (event.target !== playIcon) {
+    return;
+  } else {
     // UI: Buttons change
     playBtn.classList.add('pause');
     pauseBtn.classList.remove('pause');
