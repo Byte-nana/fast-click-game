@@ -37,8 +37,17 @@ function playBgSound() {
     bgSound.pause();
   }
 }
+// Sound effects
+const carrotSound = new Audio('./asset/sound/carrot_pull.mp3');
+carrotSound.preload = 'auto';
+const bugSound = new Audio('./asset/sound/bug_pull.mp3');
+bugSound.preload = 'auto';
+const gameWinSound = new Audio('./asset/sound/game_win.mp3');
+gameWinSound.preload = 'auto';
+const gameLoseSound = new Audio('./asset/sound/alert.wav');
+gameLoseSound.preload = 'auto';
+
 // Global variables
-let b;
 let countdown;
 let totalSecs = 10;
 let carrotCount = 3;
@@ -67,6 +76,7 @@ function startGame(totalSecs, carrotCount, bugCount) {
   carrotCounter.innerHTML = carrotCount;
   showPlayTime(totalSecs);
   startCountdown(totalSecs);
+  bgSound.play();
 }
 
 function createCarrots(carrotCount) {
@@ -141,6 +151,7 @@ function clickCarrots(target) {
   const clickedCarrot = target.dataset.click;
   if (!clickedCarrot) return;
   target.remove();
+  carrotSound.play();
   carrotCount--;
   carrotCounter.innerHTML = carrotCount;
   if (carrotCount === 0) {
@@ -153,6 +164,7 @@ function clickBugs(target) {
   if (!clickedBug) {
     return;
   } else {
+    bugSound.play();
     loseGame();
   }
 }
@@ -166,22 +178,34 @@ function showAlert(message) {
 
 function removeAlert() {
   notif.classList.remove('show-notification');
-  playBtn.classList.remove('pause');
-  pauseBtn.classList.add('pause');
+  pauseBtn.style.visibility = 'visible';
 }
 function stopGame() {
   stopCountdown();
+  gameWindow.removeEventListener('clcik', handleGameStart);
   gameWindow.removeEventListener('click', handleOnGoingGame);
 }
 
 function winGame() {
   showAlert('You won 🥳');
   stopGame();
+  gameWinSound.play();
 }
 
 function loseGame() {
   showAlert('You Lose 🥲');
   stopGame();
+  gameLoseSound.play();
+}
+// Pauding game event
+gameWindow.addEventListener('click', pauseGame);
+function pauseGame(event) {
+  const icon = pauseBtn.querySelector('i');
+  if (event.target !== icon) {
+    return;
+  } else {
+    showAlert('Replay❓');
+  }
 }
 
 // Replaying  game event
@@ -189,21 +213,22 @@ gameWindow.addEventListener('click', replayGame);
 
 function replayGame(event) {
   const replayIcon = event.target.classList.contains('fa-rotate-right');
-  if (!replayIcon) return;
-  removeAlert();
-  //stop timer
-  //stop clicking event
-  stopGame();
-  //remove existing elemtns
-  document.querySelectorAll('.carrot').forEach((item) => item.remove());
-  document.querySelectorAll('.bug').forEach((item) => item.remove());
-  //reset global variable as inital values
-
-  totalSecs = 10;
-  carrotCount = 3;
-  bugCount = 4;
-
-  //another round
-  startGame(totalSecs, carrotCount, bugCount);
-  gameWindow.addEventListener('click', handleOnGoingGame);
+  if (!replayIcon) {
+    return;
+  } else {
+    removeAlert();
+    //stop timer
+    //stop clicking event
+    stopGame();
+    //remove existing elemtns
+    document.querySelectorAll('.carrot').forEach((item) => item.remove());
+    document.querySelectorAll('.bug').forEach((item) => item.remove());
+    //reset global variable as inital values
+    totalSecs = 10;
+    carrotCount = 3;
+    bugCount = 4;
+    //another round
+    startGame(totalSecs, carrotCount, bugCount);
+    gameWindow.addEventListener('click', handleOnGoingGame);
+  }
 }
