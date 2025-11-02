@@ -12,18 +12,23 @@
     <meta name="author" content="Byte-nana" />
     <!-- Favicon -->
     <link
-      rel="icon"
-      type="image/png"
-      href="./asset/favicon/favicon-96x96.png"
-      sizes="96x96"
-    />
-    <link rel="icon" type="image/svg+xml" href="./asset/favicon/favicon.svg" />
-    <link rel="shortcut icon" href="./asset/favicon/favicon.ico" />
-    <link
       rel="apple-touch-icon"
       sizes="180x180"
       href="./asset/favicon/apple-touch-icon.png"
     />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./asset/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./asset/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./asset/favicon/site.webmanifest" />
     <!-- OG -->
     <!-- <meta property="og:title" content="" />
     <meta property="og:type" content="" />
@@ -48,6 +53,14 @@
     <script type="module" src="./src/main-refactor.js" defer></script>
   </head>
   <body>
+    <section class="game-intro">
+      <h1 class="game-intro__title">Spot the lucky clover!</h1>
+      <img
+        class="game-intro__img"
+        src="./asset/image/four-leaf.png"
+        alt="A four-leaf clover"
+      />
+    </section>
     <section class="game-window">
       <figure>
         <figcaption>
@@ -73,15 +86,15 @@
         <p class="carrot-counter">0</p>
       </header>
       <main class="main">
-        <div class="notification">
-          <button class="replay-btn btn">
-            <i class="fa-solid fa-rotate-right"></i>
-          </button>
-          <p class="notification__text"></p>
-        </div>
         <!-- <img class="bug" src="./asset/img/bug.png" alt="bug" />
         <img class="carrot" src="./asset/img/carrot.png" alt="carrot" /> -->
       </main>
+    </section>
+    <section class="notification">
+      <button class="replay-btn btn">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+      <p class="notification__text"></p>
     </section>
   </body>
 </html>

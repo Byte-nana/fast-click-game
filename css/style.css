@@ -1,14 +1,30 @@
 :root {
-  --border-color: var(--color-black);
+  --audio-btn-color: var(--color-white);
+  --audio-btn-bg: #a9d88e;
+  --audio-btn-border: var(--color-green);
+
+  --play-btn-color: #4a822c;
+  --play-btn-bg: #d8eb9f;
+  --play-btn-border: #aaca69;
+
+  --timer-color: var(--color-brown);
+  --timer-bg: #fae39b;
+  --timer-border: #d3c5a1;
+
+  --counter-color: #4a822c;
+  --counter-bg: #f0e268;
+  --counter-border: #e1d354;
+
   /* color */
-  --color-yellow: #fedc03;
-  --color-orange: #fb7216;
-  --color-white: aliceblue;
-  --color-black: #000000;
+  --color-white: #fff8e7;
+  --color-green: #a5b97a;
+  --color-brown: #5f4b3b;
+
   /* size */
   --border-size: 8px;
-  --btn-size: 46px;
+  --btn-size: 52px;
   --font-size: 1.5rem;
+  --base-space: 1rem;
 }
 * {
   margin: 0;
@@ -20,9 +36,10 @@
 body {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: var(--color-green);
   cursor: default;
 }
 button {
@@ -35,9 +52,6 @@ button {
 .btn {
   width: var(--btn-size);
   height: var(--btn-size);
-  background-color: var(--color-yellow);
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-size);
 }
 .btn i {
   display: flex;
@@ -46,64 +60,95 @@ button {
   font-size: var(--font-size);
 }
 /*  */
+.game-intro {
+  display: flex;
+  gap: var(--base-space);
+}
+.game-intro__title {
+  margin-bottom: var(--base-space);
+  color: var(--color-white);
+  font-size: calc(var(--font-size) * 2);
+  font-weight: 400;
+}
+.game-intro__img {
+  width: var(--btn-size);
+  height: var(--btn-size);
+}
+/*  */
 .game-window {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 80%;
-  min-width: 400px;
   max-width: 800px;
   height: 50vh;
   min-height: 400px;
-  position: relative;
   border-radius: calc(var(--border-size) * 3);
-  background: url('/asset/img/background.png') center / cover no-repeat;
+  background: url('/asset/image/background.png') center / cover no-repeat;
 }
 /* audio */
 .bg-btn {
   margin: 0.2rem;
-  background-color: var(--color-white);
+  background-color: var(--audio-btn-bg);
+  border: 3px solid var(--audio-btn-border);
   border-radius: 50%;
+  color: var(--audio-btn-color);
 }
 /* header */
 .header {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--base-space) / 2);
+  margin-bottom: var(--base-space);
+  font-size: var(--font-size);
+}
+.play-btn,
+.replay-btn {
+  background-color: var(--play-btn-bg);
+  border: 3px solid var(--play-btn-border);
+  border-radius: var(--border-size);
+  color: var(--play-btn-color);
 }
 .pause {
   display: none;
 }
-.timer,
-.carrot-counter {
-  border: 2px solid var(--border-color);
-  margin: 0.5rem auto;
-  font-size: var(--font-size);
-}
 .timer {
-  width: fit-content;
-  padding: 0.2rem 1.5rem;
-  background-color: var(--color-white);
+  padding: calc(var(--base-space) / 2) calc(var(--base-space) * 2);
+  border: 3px solid var(--timer-border);
   border-radius: var(--border-size);
+  background-color: var(--timer-bg);
+  color: var(--timer-color);
 }
 .carrot-counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: var(--btn-size);
   height: var(--btn-size);
-  padding: 0.3rem;
-  background-color: var(--color-orange);
+  border: 3px solid var(--counter-border);
   border-radius: 50%;
-  color: var(--color-white);
+  background-color: var(--counter-bg);
+  color: var(--counter-color);
+}
+.main {
+  width: 100%;
+  height: 100%;
 }
 /* main */
 .notification {
+  position: absolute;
   display: none;
-  width: 30%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 1rem 0;
-  gap: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 30%;
+  padding: var(--base-space) 0;
+  gap: var(--base-space);
+  background-color: rgba(169, 216, 142, 0.7);
   border-radius: calc(var(--border-size) * 3);
+  transform: translateY(100%);
   z-index: 5;
 }
 .show-notification {
@@ -111,7 +156,7 @@ button {
 }
 .notification__text {
   font-size: var(--font-size);
-  color: var(--color-white);
+  color: var(--color-brown);
 }
 
 .bug,
@@ -120,4 +165,13 @@ button {
   width: var(--btn-size);
   height: var(--btn-size);
   cursor: pointer;
+}
+/*  */
+.carrot {
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.carrot:hover {
+  transform: scale(1.5) rotate(5deg);
+  filter: brightness(1.1);
 }

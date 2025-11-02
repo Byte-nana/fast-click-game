@@ -38,11 +38,11 @@ function playBgSound() {
   }
 }
 // Sound effects
-const carrotSound = new Audio('./asset/sound/carrot_pull.mp3');
+const carrotSound = new Audio('./asset/sound/leaf-pull.wav');
 carrotSound.preload = 'auto';
-const bugSound = new Audio('./asset/sound/bug_pull.mp3');
+const bugSound = new Audio('./asset/sound/rabbit-pull.wav');
 bugSound.preload = 'auto';
-const gameWinSound = new Audio('./asset/sound/game_win.mp3');
+const gameWinSound = new Audio('./asset/sound/game-win.wav');
 gameWinSound.preload = 'auto';
 const gameLoseSound = new Audio('./asset/sound/alert.wav');
 gameLoseSound.preload = 'auto';
@@ -84,7 +84,7 @@ function createCarrots(carrotCount) {
   for (let i = 0; i < carrotCount; i++) {
     let uuid = self.crypto.randomUUID();
     const carrots = new Image();
-    carrots.src = './asset/img/carrot.png';
+    carrots.src = './asset/image/four-leaf.png';
     carrots.alt = 'carrot';
     carrots.className = 'carrot';
     carrots.dataset.click = uuid;
@@ -100,7 +100,7 @@ function createBugs(bugCount) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < bugCount; i++) {
     const bugs = new Image();
-    bugs.src = './asset/img/bug.png';
+    bugs.src = './asset/image/rabbit.png';
     bugs.alt = 'bug';
     bugs.className = 'bug';
     bugs.style.transform = `translate(${
@@ -150,8 +150,8 @@ function handleOnGoingGame(event) {
 function clickCarrots(target) {
   const clickedCarrot = target.dataset.click;
   if (!clickedCarrot) return;
-  target.remove();
   carrotSound.play();
+  target.remove();
   carrotCount--;
   carrotCounter.innerHTML = carrotCount;
   if (carrotCount === 0) {
@@ -182,6 +182,7 @@ function removeAlert() {
 }
 function stopGame() {
   stopCountdown();
+  bgSound.pause();
   gameWindow.removeEventListener('clcik', handleGameStart);
   gameWindow.removeEventListener('click', handleOnGoingGame);
 }
@@ -209,10 +210,12 @@ function pauseGame(event) {
 }
 
 // Replaying  game event
-gameWindow.addEventListener('click', replayGame);
+notif.addEventListener('click', replayGame);
 
 function replayGame(event) {
   const replayIcon = event.target.classList.contains('fa-rotate-right');
+  console.log(replayIcon);
+
   if (!replayIcon) {
     return;
   } else {
