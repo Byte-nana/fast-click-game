@@ -92,7 +92,7 @@ button {
   height: 50vh;
   min-height: 400px;
   border-radius: var(--border-md);
-  background: url('/asset/image/background.png') center / cover no-repeat;
+  background: url('../asset/image/background.png') center / cover no-repeat;
 }
 /* audio */
 .bg-btn {
