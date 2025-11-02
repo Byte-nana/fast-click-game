@@ -1,237 +1,218 @@
 'use strict';
-//
-const gameWindow = document.querySelector('.game-window');
-const playBtn = document.querySelector('.play-btn');
-const pauseBtn = document.querySelector('.pause-btn');
-const timer = document.querySelector('.timer');
-const main = document.querySelector('.main');
-const carrotCounter = document.querySelector('.carrot-counter');
+
+const LEAF_SIZE = 80;
+const FOURLEAF_COUNT = 10;
+const RABBIT_COUNT = 15;
+const GAME_DURATION_SEC = 10;
+
+const gameBtn = document.querySelector('.game-btn');
+const replyBtn = document.querySelector('.replay-btn');
+const gameField = document.querySelector('.game-field');
+const fieldRect = gameField.getBoundingClientRect();
+const timerIndicator = document.querySelector('.timer');
+const scoreBoard = document.querySelector('.score-board');
 const notif = document.querySelector('.notification');
 const notifText = document.querySelector('.notification__text');
-// position
-const headerHeight = document.querySelector('.header').offsetHeight;
-const visibleGameWindowWidth = gameWindow.offsetWidth;
-const visibleGameWindowHeight = gameWindow.offsetHeight - headerHeight;
 
-// Background Audio
 const bgSound = document.querySelector('.audio-bg');
 const bgBtn = document.querySelector('.bg-btn');
 
-gameWindow.addEventListener('click', onBgSound);
+// Sound effects
+const soundFourLeaf = new Audio('./asset/sound/leaf-pull.wav');
+const soundRabbit = new Audio('./asset/sound/rabbit-pull.wav');
+const soundWin = new Audio('./asset/sound/game-win.wav');
+const soundLose = new Audio('./asset/sound/alert.wav');
 
-function onBgSound(event) {
-  const icon = bgBtn.querySelector('i');
-  if (event.target !== icon) {
-    return;
+let started = false;
+let timer = undefined;
+let score = 0;
+
+// Event
+gameBtn.addEventListener('click', () => {
+  if (started) {
+    stopGame();
   } else {
+    startGame();
+  }
+});
+
+gameField.addEventListener('click', onFieldClick);
+
+replyBtn.addEventListener('click', () => {
+  removeAlert();
+  startGame();
+});
+
+bgBtn.addEventListener('click', () => {
+  if (started) {
     playBgSound();
   }
-}
-function playBgSound() {
-  if (bgSound.paused) {
-    bgBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-    bgSound.currentTime = 0;
-    bgSound.play();
-  } else {
-    bgBtn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
-    bgSound.pause();
-  }
-}
-// Sound effects
-const carrotSound = new Audio('./asset/sound/leaf-pull.wav');
-carrotSound.preload = 'auto';
-const bugSound = new Audio('./asset/sound/rabbit-pull.wav');
-bugSound.preload = 'auto';
-const gameWinSound = new Audio('./asset/sound/game-win.wav');
-gameWinSound.preload = 'auto';
-const gameLoseSound = new Audio('./asset/sound/alert.wav');
-gameLoseSound.preload = 'auto';
+});
 
-// Global variables
-let countdown;
-let totalSecs = 10;
-let carrotCount = 3;
-let bugCount = 4;
-
-// Starting game event
-gameWindow.addEventListener('click', handleGameStart);
-
-function handleGameStart(event) {
-  const playIcon = playBtn.querySelector('i');
-  //   const playIcon = event.target.classList.contains('fa-play');
-  if (event.target !== playIcon) {
-    return;
-  } else {
-    // UI: Buttons change
-    playBtn.classList.add('pause');
-    pauseBtn.classList.remove('pause');
-
-    startGame(totalSecs, carrotCount, bugCount);
-  }
-}
-
-function startGame(totalSecs, carrotCount, bugCount) {
-  createCarrots(carrotCount);
-  createBugs(bugCount);
-  carrotCounter.innerHTML = carrotCount;
-  showPlayTime(totalSecs);
-  startCountdown(totalSecs);
+function startGame() {
+  started = true;
+  initGame();
+  showStopButton();
+  showTimerAndScore();
+  startGameTimer();
   bgSound.play();
 }
 
-function createCarrots(carrotCount) {
-  const fragment = document.createDocumentFragment();
-  for (let i = 0; i < carrotCount; i++) {
-    let uuid = self.crypto.randomUUID();
-    const carrots = new Image();
-    carrots.src = './asset/image/four-leaf.png';
-    carrots.alt = 'carrot';
-    carrots.className = 'carrot';
-    carrots.dataset.click = uuid;
-    carrots.style.transform = `translate(${
-      Math.random() * (visibleGameWindowWidth - 100)
-    }px, ${Math.random() * (visibleGameWindowHeight - 100)}px)`;
-    fragment.appendChild(carrots);
-  }
-  main.appendChild(fragment);
+function stopGame() {
+  started = false;
+  stopGameTimer();
+  showAlert('REPLAY❓');
+  hideGameButton();
+  pauseSound(bgSound);
+  playSound(soundLose);
 }
 
-function createBugs(bugCount) {
-  const fragment = document.createDocumentFragment();
-  for (let i = 0; i < bugCount; i++) {
-    const bugs = new Image();
-    bugs.src = './asset/image/rabbit.png';
-    bugs.alt = 'bug';
-    bugs.className = 'bug';
-    bugs.style.transform = `translate(${
-      Math.random() * (visibleGameWindowWidth - 100)
-    }px, ${Math.random() * (visibleGameWindowHeight - 100)}px)`;
-    fragment.appendChild(bugs);
+function finishGame(win) {
+  started = false;
+  hideGameButton();
+  if (win) {
+    playSound(soundWin);
+    pauseSound(bgSound);
+  } else {
+    playSound(soundLose);
+    pauseSound(bgSound);
   }
-  main.appendChild(fragment);
+  stopGameTimer();
+  showAlert(win ? 'YOU WON 🥳' : 'YOU LOST 😢');
 }
 
-function showPlayTime(totalSecs) {
-  if (totalSecs < 0) return;
-  const minutes = Math.floor(totalSecs / 60);
-  const seconds = Math.floor(totalSecs - minutes * 60);
+function initGame() {
+  score = 0;
+  gameField.innerHTML = '';
+  updateScoreBoard();
+  addItem('four-leaf', FOURLEAF_COUNT, './asset/image/four-leaf.png');
+  addItem('rabbit', RABBIT_COUNT, './asset/image/rabbit.png');
+}
 
-  timer.innerHTML = `
+function onFieldClick(event) {
+  if (!started) {
+    return;
+  }
+  const target = event.target;
+  if (target.matches('.four-leaf')) {
+    score++;
+    playSound(soundFourLeaf);
+    target.remove();
+    updateScoreBoard();
+    if (score === FOURLEAF_COUNT) {
+      finishGame(true);
+    }
+  } else if (target.matches('.rabbit')) {
+    playSound(soundRabbit);
+    finishGame(false);
+  }
+}
+
+// Button
+function showStopButton() {
+  const icon = gameBtn.querySelector('.fa-solid');
+  icon.classList.remove('fa-play');
+  icon.classList.add('fa-stop');
+  gameBtn.style.visibility = 'visible';
+}
+
+function hideGameButton() {
+  gameBtn.style.visibility = 'hidden';
+}
+
+// Timer and Scoreboard
+function showTimerAndScore() {
+  timerIndicator.style.visibility = 'visible';
+  scoreBoard.style.visibility = 'visible';
+}
+
+function updateScoreBoard() {
+  scoreBoard.textContent = FOURLEAF_COUNT - score;
+}
+
+function startGameTimer() {
+  let remainingTimeSec = GAME_DURATION_SEC;
+  updateTimerText(remainingTimeSec);
+
+  timer = setInterval(() => {
+    --remainingTimeSec;
+    updateTimerText(remainingTimeSec);
+    if (remainingTimeSec <= 0) {
+      stopGameTimer();
+      finishGame(score === FOURLEAF_COUNT);
+      return;
+    }
+  }, 1000);
+}
+
+function updateTimerText(time) {
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+
+  timerIndicator.textContent = `
   ${String(minutes).padStart(2, '0')} : 
   ${String(seconds).padStart(2, '0')}
   `;
 }
 
-function startCountdown(totalSecs) {
-  countdown = setInterval(() => {
-    totalSecs--;
-    showPlayTime(totalSecs);
-
-    if (totalSecs <= 0) {
-      loseGame();
-    }
-  }, 1000);
+function stopGameTimer() {
+  clearInterval(timer);
 }
-
-function stopCountdown() {
-  clearInterval(countdown);
-  countdown = null;
-}
-
-// Playing game event
-gameWindow.addEventListener('click', handleOnGoingGame);
-
-function handleOnGoingGame(event) {
-  let target = event.target;
-  clickCarrots(target);
-  clickBugs(target);
-}
-
-function clickCarrots(target) {
-  const clickedCarrot = target.dataset.click;
-  if (!clickedCarrot) return;
-  carrotSound.play();
-  target.remove();
-  carrotCount--;
-  carrotCounter.innerHTML = carrotCount;
-  if (carrotCount === 0) {
-    winGame();
-  }
-}
-
-function clickBugs(target) {
-  const clickedBug = target.classList.contains('bug');
-  if (!clickedBug) {
-    return;
-  } else {
-    bugSound.play();
-    loseGame();
-  }
-}
-
+// Alert
 function showAlert(message) {
   notif.classList.add('show-notification');
   notifText.textContent = message;
-  pauseBtn.style.visibility = 'hidden';
-  stopGame();
 }
 
 function removeAlert() {
   notif.classList.remove('show-notification');
-  pauseBtn.style.visibility = 'visible';
-}
-function stopGame() {
-  stopCountdown();
-  bgSound.pause();
-  gameWindow.removeEventListener('clcik', handleGameStart);
-  gameWindow.removeEventListener('click', handleOnGoingGame);
 }
 
-function winGame() {
-  showAlert('You won 🥳');
-  stopGame();
-  gameWinSound.play();
-}
-
-function loseGame() {
-  showAlert('You Lose 🥲');
-  stopGame();
-  gameLoseSound.play();
-}
-// Pauding game event
-gameWindow.addEventListener('click', pauseGame);
-function pauseGame(event) {
-  const icon = pauseBtn.querySelector('i');
-  if (event.target !== icon) {
-    return;
+// Sound
+function playBgSound() {
+  const icon = bgBtn.querySelector('.fa-solid');
+  if (bgSound.paused) {
+    icon.classList.remove('fa-volume-xmark');
+    icon.classList.add('fa-volume-high');
+    playSound(bgSound);
   } else {
-    showAlert('Replay❓');
+    icon.classList.add('fa-volume-xmark');
+    icon.classList.remove('fa-volume-high');
+    bgBtn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
+    pauseSound(bgSound);
   }
 }
 
-// Replaying  game event
-notif.addEventListener('click', replayGame);
+function playSound(sound) {
+  sound.currentTime = 0;
+  sound.play();
+}
 
-function replayGame(event) {
-  const replayIcon = event.target.classList.contains('fa-rotate-right');
-  console.log(replayIcon);
+function pauseSound(sound) {
+  sound.pause();
+}
 
-  if (!replayIcon) {
-    return;
-  } else {
-    removeAlert();
-    //stop timer
-    //stop clicking event
-    stopGame();
-    //remove existing elemtns
-    document.querySelectorAll('.carrot').forEach((item) => item.remove());
-    document.querySelectorAll('.bug').forEach((item) => item.remove());
-    //reset global variable as inital values
-    totalSecs = 10;
-    carrotCount = 3;
-    bugCount = 4;
-    //another round
-    startGame(totalSecs, carrotCount, bugCount);
-    gameWindow.addEventListener('click', handleOnGoingGame);
+function addItem(className, count, imgPath) {
+  const x1 = 0;
+  const y1 = 0;
+  const x2 = fieldRect.width - LEAF_SIZE;
+  const y2 = fieldRect.height - LEAF_SIZE;
+
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    const item = new Image();
+    item.src = imgPath;
+    item.alt = className;
+    item.className = className;
+    const x = randomNumber(x1, x2);
+    const y = randomNumber(y1, y2);
+    item.style.left = `${x}px`;
+    item.style.top = `${y}px`;
+    fragment.appendChild(item);
   }
+  gameField.appendChild(fragment);
+}
+
+function randomNumber(min, max) {
+  return Math.random() * (max - min) + min;
 }

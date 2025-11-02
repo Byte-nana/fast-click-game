@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- SEO -->
-    <title>Clickrush</title>
+    <title>Spot the lucky clover!</title>
     <meta
       name="description"
-      content="Game which click and remove all carrots to win."
+      content="Game which click and find all the four-leaf clovers to be lucky."
     />
     <meta name="author" content="Byte-nana" />
     <!-- Favicon -->
@@ -50,7 +50,7 @@
     <link rel="stylesheet" href="./css/style.css" />
     <!-- Javascript -->
     <!-- <script type="module" src="./src/main.js" defer></script> -->
-    <script type="module" src="./src/main-refactor.js" defer></script>
+    <script src="./src/main-refactor.js" defer></script>
   </head>
   <body>
     <section class="game-intro">
@@ -76,19 +76,13 @@
         ></audio>
       </figure>
       <header class="header">
-        <button class="play-btn btn" aria-label="Button for playing game">
+        <button class="game-btn btn" aria-label="Button for playing game">
           <i class="fa-solid fa-play"></i>
         </button>
-        <button class="pause-btn btn pause" aria-label="Button for pause game">
-          <i class="fa-solid fa-stop"></i>
-        </button>
-        <p class="timer">00 : 00</p>
-        <p class="carrot-counter">0</p>
+        <p class="timer"></p>
+        <p class="score-board"></p>
       </header>
-      <main class="main">
-        <!-- <img class="bug" src="./asset/img/bug.png" alt="bug" />
-        <img class="carrot" src="./asset/img/carrot.png" alt="carrot" /> -->
-      </main>
+      <main class="game-field"></main>
     </section>
     <section class="notification">
       <button class="replay-btn btn">
