@@ -24,7 +24,7 @@ Built with **HTML, CSS, and Vanilla JavaScript**, this is version 1.0 — the fo
 🎥 **Watch the Demo:**  
 [![Watch the demo](https://cdn.loom.com/sessions/thumbnails/e81e59fe0a104d86b03ed0a96dc9cc50-576f61e9a6825231-full-play.gif)](https://www.loom.com/share/e81e59fe0a104d86b03ed0a96dc9cc50)
 
-🔗 [**Play the Game Here**](https://byte-nana.github.io/fast-click-game/)
+🔗 [**Play the Game Here ↗️**](https://byte-nana.github.io/fast-click-game/)
 
 ---
 
